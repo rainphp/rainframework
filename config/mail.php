@@ -1,5 +1,7 @@
 <?php
 
+        define('ADMIN_EMAIL', '###');
+        define('DEFAULT_TXT', 'thx to use rainframework');
 	// define the mail type, choose smtp to use smtp or mail to send with apache configured mail server
 	define( "MAIL_TYPE", "mail" );
 

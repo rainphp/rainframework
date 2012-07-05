@@ -27,6 +27,7 @@
     define( "LANGUAGE_DIR",             "system/language/" );
     define( "CONSTANTS_DIR",            "system/const/" );
 	define( "LOG_DIR",                  "system/log/" );
+        define( "EMAIL_DIR",              "system/library/Email/" );
 
     // website folders
 	define( "UPLOADS_DIR",              "web/uploads/" );
