@@ -25,7 +25,7 @@ class Loader{
 	protected static $instance,	// class instance for singleton calls
 
 	// controller settings
-	 $controllers_dir = CONTROLLERS_DIR, 
+	 $controllers_dir = CONTROLLERS_DIR,
 	 $controller_extension = CONTROLLER_EXTENSION,
 	 $controller_class_name = CONTROLLER_CLASS_NAME,
 	 $models_dir = MODELS_DIR;
@@ -55,8 +55,8 @@ class Loader{
 		return self::$instance ?: self::$instance=new self;
 	}
 
-				
-				
+			
+			
 				function auto_load_controller(){
 								// load the Router library and get the URI
 								require_once LIBRARY_DIR . "Router.php";
@@ -65,7 +65,7 @@ class Loader{
 								$this->selected_controller			= $controller			 = $router->get_controller();
 								$this->selected_action					= $action					 = $router->get_action();
 								$this->selected_params					= $params					 = $router->get_params();
-								
+							
 								$this->load_controller($controller, $action, $params );
 				}
 
@@ -74,7 +74,7 @@ class Loader{
 				/**
 				 * Load the content selected by the URI and save the output in load_area.
 				 * Leave the parameters null if you want to load automatically the controllers
-				 * 
+				 *
 				 * @param string $controller selected controller
 				 * @param string $action selected action
 				 * @param string $params array of the selected actions
@@ -93,7 +93,7 @@ class Loader{
 						else
 				return trigger_error( "CONTROLLER: FILE <b>{$controller_file}</b> NOT FOUND ", E_USER_WARNING );
 
-										
+									
 						// define the class name of the controller
 						$class = $controller . self::$controller_class_name;
 
@@ -104,7 +104,7 @@ class Loader{
 				$controller_obj = new $class( $this );
 						else
 				return trigger_error( "CONTROLLER: CLASS <b>{$controller}</b> NOT FOUND ", E_USER_WARNING );
-										
+									
 
 						if( $action ){
 
@@ -151,14 +151,14 @@ class Loader{
 								}
 
 						}
-										
+									
 
 				}
 
 
 				/**
 				 * Load the model
-				 * 
+				 *
 				 * @param string $model selected model
 				 * @param string $action selected action
 				 * @param array $params parameters
@@ -168,10 +168,10 @@ class Loader{
 
 			// load the model class
 			require_once LIBRARY_DIR . "Model.php";
-								
+							
 			// transform the model string to capitalized. e.g. user => User, news_list => News_List
 			$model = implode( "_", array_map( "ucfirst",	explode( "_", $model )	) );
-					
+				
 			// include the file
 			if( file_exists($file = self::$models_dir . $model . ".php") )
 				require_once $file;
@@ -192,9 +192,9 @@ class Loader{
 			}
 
 				}
-				
-				
-				
+			
+			
+			
 				function load_menu(){
 						$menu_obj = $this->load_model( "menu" );
 						$menu_list = $menu_obj->load_menu();
@@ -271,7 +271,7 @@ class Loader{
 
 						$installed_language = get_installed_language();
 						$installed_language = array_flip( $installed_language );
-						
+					
 						// get the language
 						if (get('set_lang_id'))
 								$lang_id = get('set_lang_id');
@@ -294,7 +294,7 @@ class Loader{
 
 						// load the dictionaries
 						load_lang('generic');
-						
+					
 				}
 
 
@@ -302,7 +302,7 @@ class Loader{
 
 				/**
 				 * Init the theme
-				 * 
+				 *
 				 * @param string $theme selected theme
 				 */
 				function init_theme( $theme = null ){
@@ -336,7 +336,7 @@ class Loader{
 
 				/**
 				 * Init the page layout
-				 * 
+				 *
 				 * @param string $page_layout selected page layout
 				 */
 				function init_page_layout( $page_layout ){
@@ -365,7 +365,7 @@ class Loader{
 
 	/**
 	 * Draw the output
-				 * 
+				 *
 				 * @param bool $return_string if true return a string else draw the page
 				 * @return string
 	 */
@@ -373,11 +373,10 @@ class Loader{
 
 		$tpl = new View;
 
-								// assign all variable
+		// assign all variable
 		$tpl->assign( $this->var );
-								
-								
-								// - LOAD AREA ----
+	
+		// - LOAD AREA ----
 								// wrap all the blocks in a load area
 								if( $this->load_area_array ){
 										foreach( $this->load_area_array as $load_area_name => $blocks_array )
@@ -408,7 +407,7 @@ class Loader{
 	/**
 	 * This function can be called by the Controller.
 	 * It disable the loading of layout and optionally can enables/disables the loading of javascript and style
-				 * 
+				 *
 				 * @param bool $load_javascript if true Rain load the javascript
 				 * @param bool $load_style if true Rain load the stylesheet
 				 * @param bool $ajax_mode if true it set the ajax mode
@@ -419,7 +418,7 @@ class Loader{
 		$this->load_style = $load_style;
 	}
 
-				
+			
 				/**
 				 * Get the selected controller dir
 				 * @return string
@@ -453,7 +452,7 @@ class Loader{
 	/**
 	 * Configure the settings,
 	 * settings are static variable to setup this class
-	 * 
+	 *
 	 * @param string $setting setting name
 	 * @param string $value value of the setting
 	 *
@@ -469,7 +468,7 @@ class Loader{
 
 	/**
 	 * Page was not found
-	 * 
+	 *
 	 * @param string $msg, message for the page not found
 	 */
 	protected function _draw_page_not_found( $msg = "page_not_found" ){
@@ -488,8 +487,8 @@ class Loader{
 								$html .= $this->load_javascript ? get_javascript() : null;
 		die( $html );
 	}
-				
-				
+			
+			
 	/**
 	 * wrap all blocks of an load area
 	 */
@@ -500,7 +499,7 @@ class Loader{
 				$html .= $block_html;
 		return $html;
 	}
-				
+			
 				/**
 				 *	init the load_area.php file that define all the load area of the template page
 				 */
@@ -526,7 +525,7 @@ class Loader{
 
 								require $src;
 								$this->load_area_array = $load_area;
-				}	
+				}
 
 	protected function	__construct() {}
 }
