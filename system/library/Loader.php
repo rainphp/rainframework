@@ -55,8 +55,8 @@ class Loader{
 		return self::$instance ?: self::$instance=new self;
 	}
 
-			
-			
+
+
 				function auto_load_controller(){
 								// load the Router library and get the URI
 								require_once LIBRARY_DIR . "Router.php";
@@ -65,7 +65,7 @@ class Loader{
 								$this->selected_controller			= $controller			 = $router->get_controller();
 								$this->selected_action					= $action					 = $router->get_action();
 								$this->selected_params					= $params					 = $router->get_params();
-							
+
 								$this->load_controller($controller, $action, $params );
 				}
 
@@ -93,7 +93,7 @@ class Loader{
 						else
 				return trigger_error( "CONTROLLER: FILE <b>{$controller_file}</b> NOT FOUND ", E_USER_WARNING );
 
-									
+
 						// define the class name of the controller
 						$class = $controller . self::$controller_class_name;
 
@@ -104,7 +104,7 @@ class Loader{
 				$controller_obj = new $class( $this );
 						else
 				return trigger_error( "CONTROLLER: CLASS <b>{$controller}</b> NOT FOUND ", E_USER_WARNING );
-									
+
 
 						if( $action ){
 
@@ -151,7 +151,7 @@ class Loader{
 								}
 
 						}
-									
+
 
 				}
 
@@ -168,10 +168,10 @@ class Loader{
 
 			// load the model class
 			require_once LIBRARY_DIR . "Model.php";
-							
+
 			// transform the model string to capitalized. e.g. user => User, news_list => News_List
 			$model = implode( "_", array_map( "ucfirst",	explode( "_", $model )	) );
-				
+
 			// include the file
 			if( file_exists($file = self::$models_dir . $model . ".php") )
 				require_once $file;
@@ -192,9 +192,9 @@ class Loader{
 			}
 
 				}
-			
-			
-			
+
+
+
 				function load_menu(){
 						$menu_obj = $this->load_model( "menu" );
 						$menu_list = $menu_obj->load_menu();
@@ -232,121 +232,96 @@ class Loader{
 		db::init();
 	}
 
+	/**
+	 * Init the session class
+	 */
+	function init_session(){
+		require_once LIBRARY_DIR . "Session.php";
+		session::get_instance();
+	}
 
+	/**
+	 * Init the user
+	 */
+	function init_user(){
+		require_once LIBRARY_DIR . "User.php";
+		new User;
+	}
 
+	/**
+	 * User login
+	 */
+	function auth_user(){
+		$this->init_user();
+		User::Login( post('login'), post('password'), post('cookie'), get_post('logout') );
+	}
 
-				/**
-				 * Init the session class
-				 */
-				function init_session(){
-						require_once LIBRARY_DIR . "Session.php";
-						session::get_instance();
-				}
+	function init_language() {
+		$installed_language = get_installed_language();
+		$installed_language = array_flip( $installed_language );
 
+		// get the language
+		if (get('set_lang_id'))
+			$lang_id = get('set_lang_id');
+		elseif (isset($_SESSION['lang_id']))
+			$lang_id = $_SESSION['lang_id'];
+		else
+			$lang_id = get_setting('lang_id');
 
+		// language not found, load the default language
+		if (!isset($installed_language[$lang_id])) {
+			$default_language = array_pop($installed_language);
+			$lang_id = $default_language['lang_id'];
+		}
 
+		// set the language in session
+		$_SESSION['lang_id'] = $lang_id;
 
-				/**
-				 * Init the user
-				 */
-				function init_user(){
-						require_once LIBRARY_DIR . "User.php";
-						new User;
-				}
+		// define the constant
+		define("LANG_ID", $lang_id);
+		// load the dictionaries
+		load_lang('generic');
+}
 
+	/**
+	 * Init the theme
+	 *
+	 * @param string $theme selected theme
+	 */
+	function init_theme( $theme = null ){
 
+		// Init the view class
+		require_once LIBRARY_DIR . "View.php";
 
-				/**
-				 * User login
-				 */
-				function auth_user(){
-						$this->init_user();
-						User::Login( post('login'), post('password'), post('cookie'), get_post('logout') );
-				}
-
-
-
-
-				function init_language() {
-
-						$installed_language = get_installed_language();
-						$installed_language = array_flip( $installed_language );
-					
-						// get the language
-						if (get('set_lang_id'))
-								$lang_id = get('set_lang_id');
-						elseif (isset($_SESSION['lang_id']))
-								$lang_id = $_SESSION['lang_id'];
-						else
-								$lang_id = get_setting('lang_id');
-
-						// language not found, load the default language
-						if (!isset($installed_language[$lang_id])) {
-								$default_language = array_pop($installed_language);
-								$lang_id = $default_language['lang_id'];
-						}
-
-						// set the language in session
-						$_SESSION['lang_id'] = $lang_id;
-
-						// define the constant
-						define("LANG_ID", $lang_id);
-
-						// load the dictionaries
-						load_lang('generic');
-					
-				}
-
-
-
-
-				/**
-				 * Init the theme
-				 *
-				 * @param string $theme selected theme
-				 */
-				function init_theme( $theme = null ){
-
-								// Init the view class
-								require_once LIBRARY_DIR . "View.php";
-
-								// if theme dir is a directory
+		// if theme dir is a directory
 		if( is_dir( $theme_dir = VIEWS_DIR . $theme . ( ( !$theme or substr($theme,-1,1) ) =="/" ? null : "/" ) ) ){
 			define( "THEME_DIR", $theme_dir );
-												View::configure( "tpl_dir", THEME_DIR );
-												View::configure( "cache_dir", CACHE_DIR );
-												View::configure( "base_url", URL );
-		}
-		else
+			View::configure( "tpl_dir", THEME_DIR );
+			View::configure( "cache_dir", CACHE_DIR );
+			View::configure( "base_url", URL );
+		}else
 			$this->_draw_page_not_found("theme_not_found");
+	}
 
-				}
+	/**
+	 * Init eventual Javascript useful for the application.
+	 * Extends the class Loader if you have to load more javascript
+	 */
+	function init_js(){
+		add_javascript( "var url = '" . URL . "';" );
+	}
 
+	/**
+	 * Init the page layout
+	 *
+	 * @param string $page_layout selected page layout
+	 */
+	function init_page_layout( $page_layout ){
+		$this->page_layout = $page_layout;
 
-
-				/**
-				 * Init eventual Javascript useful for the application.
-				 * Extends the class Loader if you have to load more javascript
-				 */
-				function init_js(){
-								add_javascript( "var url = '" . URL . "';" );
-				}
-
-
-
-				/**
-				 * Init the page layout
-				 *
-				 * @param string $page_layout selected page layout
-				 */
-				function init_page_layout( $page_layout ){
-								$this->page_layout = $page_layout;
-
-								// init the load area array
-								$this->_get_load_area();
-				}
-
-
+		// init the load area array
+		$this->_get_load_area();
+	}
 
 	/**
 	 * Assign value to the page layout
@@ -375,7 +350,7 @@ class Loader{
 
 		// assign all variable
 		$tpl->assign( $this->var );
-	
+
 		// - LOAD AREA ----
 								// wrap all the blocks in a load area
 								if( $this->load_area_array ){
@@ -418,7 +393,7 @@ class Loader{
 		$this->load_style = $load_style;
 	}
 
-			
+
 				/**
 				 * Get the selected controller dir
 				 * @return string
@@ -487,8 +462,8 @@ class Loader{
 								$html .= $this->load_javascript ? get_javascript() : null;
 		die( $html );
 	}
-			
-			
+
+
 	/**
 	 * wrap all blocks of an load area
 	 */
@@ -499,7 +474,7 @@ class Loader{
 				$html .= $block_html;
 		return $html;
 	}
-			
+
 				/**
 				 *	init the load_area.php file that define all the load area of the template page
 				 */
