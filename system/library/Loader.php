@@ -10,9 +10,9 @@
 
 require_once LIBRARY_DIR . "functions.php";
 
-    // get the execution time and total memory
-    timer_start();
-    memory_usage_start();
+// get the execution time and total memory
+timer_start();
+memory_usage_start();
 
 require_once CONSTANTS_DIR  . "constants.php";
 require_once LIBRARY_DIR . "error.functions.php";
@@ -22,38 +22,35 @@ require_once LIBRARY_DIR . "Controller.php";
  * Load and init all the classes of the framework
  */
 class Loader{
+	protected static $instance,  // class instance for singleton calls
 
+  // controller settings
+	 $controllers_dir = CONTROLLERS_DIR, 
+	 $controller_extension = CONTROLLER_EXTENSION,
+	 $controller_class_name = CONTROLLER_CLASS_NAME,
+	 $models_dir = MODELS_DIR;
 
-        protected static $instance;   // class instance for singleton calls
+	protected $page_layout = "index", // default page layout
+ 	 $not_found_layout = "not_found", // default page layout not found
 
-        // controller settings
-        protected static $controllers_dir = CONTROLLERS_DIR, 
-                         $controller_extension = CONTROLLER_EXTENSION,
-                         $controller_class_name = CONTROLLER_CLASS_NAME,
-                         $models_dir = MODELS_DIR;
+   // ajax variables
+	 $ajax_mode = false,
+	 $load_javascript = false,
+	 $load_style = false,
 
-        protected $page_layout = "index",             // default page layout
-                  $not_found_layout = "not_found";    // default page layout not found
+	 $var, // variables assigned to the page layout
+	 $load_area_array = array(), // variables assigned to the page layout
 
-        // ajax variables
-        protected $ajax_mode = false,
-                  $load_javascript = false,
-                  $load_style = false;
+	 // selected controller
+	 $selected_controller = null,
+	 $selected_action = null,
+	 $selected_params = null,
+	 $loaded_controller = array();
 
-        protected $var,                   // variables assigned to the page layout
-                  $load_area_array = array();   // variables assigned to the page layout
-
-        // selected controller
-        protected $selected_controller = null,
-                  $selected_action = null,
-                  $selected_params = null,
-                  $loaded_controller = array();
-
-
-        /**
-         * Return the object Loader
-         * @return Loader
-         */
+	/**
+   * Return the object Loader
+   * @return Loader
+   */
         static function get_instance(){
             if( !self::$instance )
                 self::$instance = new self;
