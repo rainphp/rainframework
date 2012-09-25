@@ -8,4 +8,4 @@ $loader->init_session();
 $loader->init_language();//set the language
 //$loader->auth_user();
 $loader->init_theme();//set theme
-$loader->init_js();
+//$loader->init_js();
