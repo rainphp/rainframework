@@ -222,6 +222,7 @@ class Loader{
 	function init_settings( $config_dir = CONFIG_DIR, $settings_file = "settings.php" ){
 		require_once $config_dir . $settings_file;
 		require_once CONFIG_DIR . "url.php";
+		return $this;
 	}
 
 	/**
@@ -230,6 +231,7 @@ class Loader{
 	function init_db(){
 		require_once LIBRARY_DIR . "DB.php";
 		db::init();
+		return $this;
 	}
 
 	/**
@@ -238,6 +240,7 @@ class Loader{
 	function init_session(){
 		require_once LIBRARY_DIR . "Session.php";
 		session::get_instance();
+		return $this;
 	}
 
 	/**
@@ -246,6 +249,7 @@ class Loader{
 	function init_user(){
 		require_once LIBRARY_DIR . "User.php";
 		new User;
+		return $this;
 	}
 
 	/**
@@ -281,7 +285,8 @@ class Loader{
 		define("LANG_ID", $lang_id);
 		// load the dictionaries
 		load_lang('generic');
-}
+		return $this;
+	}
 
 	/**
 	 * Init the theme
@@ -299,6 +304,7 @@ class Loader{
 			View::configure( "tpl_dir", THEME_DIR );
 			View::configure( "cache_dir", CACHE_DIR );
 			View::configure( "base_url", URL );
+			return $this;
 		}else
 			$this->_draw_page_not_found("theme_not_found");
 	}
@@ -309,6 +315,7 @@ class Loader{
 	 */
 	function init_js(){
 		add_javascript( "var url = '" . URL . "';" );
+		return $this;
 	}
 
 	/**
@@ -321,6 +328,7 @@ class Loader{
 
 		// init the load area array
 		$this->_get_load_area();
+		return $this;
 	}
 
 	/**
