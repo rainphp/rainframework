@@ -452,10 +452,10 @@ class Loader{
 
 	/**
 	 * Configure the settings,
-				 * settings are static variable to setup this class
-				 * 
-				 * @param string $setting setting name
-				 * @param string $value value of the setting
+	 * settings are static variable to setup this class
+	 * 
+	 * @param string $setting setting name
+	 * @param string $value value of the setting
 	 *
 	 */
 	static function configure( $setting, $value ){
@@ -467,19 +467,18 @@ class Loader{
 	}
 
 
-				/**
-				 * Page was not found
-				 * 
-				 * @param string $msg, message for the page not found
-				 */
-				protected function _draw_page_not_found( $msg = "page_not_found" ){
-								header("HTTP/1.0 404 Not Found");
-								$this->page_layout = $this->not_found_layout;
-								$this->assign( "message", get_msg($msg) );
-								$this->draw();
-								die;
-				}
-
+	/**
+	 * Page was not found
+	 * 
+	 * @param string $msg, message for the page not found
+	 */
+	protected function _draw_page_not_found( $msg = "page_not_found" ){
+		header("HTTP/1.0 404 Not Found");
+		$this->page_layout = $this->not_found_layout;
+		$this->assign( "message", get_msg($msg) );
+		$this->draw();
+		die;
+	}
 
 	/**
 	 * ajax call
@@ -491,16 +490,16 @@ class Loader{
 	}
 				
 				
-				/**
-				 * wrap all blocks of an load area
-				 */
-				protected function _blocks_wrapper( $block_array = array() ){
-						$html = null;
-						if( $block_array )
-								foreach( $block_array as $block_html )
-										$html .= $block_html;
-						return $html;
-				}
+	/**
+	 * wrap all blocks of an load area
+	 */
+	protected function _blocks_wrapper( $block_array = array() ){
+		$html = null;
+		if( $block_array )
+			foreach( $block_array as $block_html )
+				$html .= $block_html;
+		return $html;
+	}
 				
 				/**
 				 *	init the load_area.php file that define all the load area of the template page
@@ -529,9 +528,5 @@ class Loader{
 								$this->load_area_array = $load_area;
 				}	
 
-
-
-				protected function	__construct() {}
-
-
+	protected function	__construct() {}
 }
