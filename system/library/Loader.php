@@ -51,12 +51,9 @@ class Loader{
    * Return the object Loader
    * @return Loader
    */
-        static function get_instance(){
-            if( !self::$instance )
-                self::$instance = new self;
-
-            return self::$instance;
-        }
+	static function get_instance(){
+		return self::$instance ?: self::$instance=new self;
+	}
         
         
         
