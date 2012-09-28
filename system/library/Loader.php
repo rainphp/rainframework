@@ -219,7 +219,7 @@ class Loader{
 	/**
 	 * Load the settings file
 	 */
-	function init_settings( $config_dir = CONFIG_DIR, $settings_file = "settings.php" ){
+	public function initSettings( $config_dir = CONFIG_DIR, $settings_file = "settings.php" ){
 		require_once $config_dir . $settings_file;
 		require_once CONFIG_DIR . "url.php";
 		return $this;
@@ -228,7 +228,7 @@ class Loader{
 	/**
 	 * Init the database class
 	 */
-	function init_db(){
+	public function initDB(){
 		require_once LIBRARY_DIR . "DB.php";
 		db::init();
 		return $this;
@@ -237,7 +237,7 @@ class Loader{
 	/**
 	 * Init the session class
 	 */
-	function init_session(){
+	public function initSession(){
 		require_once LIBRARY_DIR . "Session.php";
 		session::get_instance();
 		return $this;
@@ -246,7 +246,7 @@ class Loader{
 	/**
 	 * Init the user
 	 */
-	function init_user(){
+	public function initUser(){
 		require_once LIBRARY_DIR . "User.php";
 		new User;
 		return $this;
@@ -255,12 +255,12 @@ class Loader{
 	/**
 	 * User login
 	 */
-	function auth_user(){
+	public function authUser(){
 		$this->init_user();
 		User::Login( post('login'), post('password'), post('cookie'), get_post('logout') );
 	}
 
-	function init_language() {
+	public function initLanguage() {
 		$installed_language = get_installed_language();
 		$installed_language = array_flip( $installed_language );
 
@@ -293,7 +293,7 @@ class Loader{
 	 *
 	 * @param string $theme selected theme
 	 */
-	function init_theme( $theme = null ){
+	public function initTheme( $theme = null ){
 
 		// Init the view class
 		require_once LIBRARY_DIR . "View.php";
@@ -313,7 +313,7 @@ class Loader{
 	 * Init eventual Javascript useful for the application.
 	 * Extends the class Loader if you have to load more javascript
 	 */
-	function init_js(){
+	public function initJS(){
 		add_javascript( "var url = '" . URL . "';" );
 		return $this;
 	}
@@ -323,7 +323,7 @@ class Loader{
 	 *
 	 * @param string $page_layout selected page layout
 	 */
-	function init_page_layout( $page_layout ){
+	public function initPageLayout( $page_layout ){
 		$this->page_layout = $page_layout;
 
 		// init the load area array
@@ -337,7 +337,7 @@ class Loader{
 	 * @param mixed $variable
 	 * @param string $value
 	 */
-	function assign( $variable, $value = null ){
+	public function assign( $variable, $value = null ){
 		if( is_array( $variable ) )
 			$this->var += $variable;
 		else
@@ -352,7 +352,7 @@ class Loader{
 				 * @param bool $return_string if true return a string else draw the page
 				 * @return string
 	 */
-	function draw( $return_string = false ){
+	public function draw( $return_string = false ){
 
 		$tpl = new View;
 
