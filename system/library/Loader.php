@@ -156,42 +156,41 @@ class Loader{
 				}
 
 
-				/**
-				 * Load the model
-				 *
-				 * @param string $model selected model
-				 * @param string $action selected action
-				 * @param array $params parameters
-				 * @param string $assign_to variable where you assign the result of the model
-				 */
-				function load_model( $model ){
+	/**
+	 * Load the model
+	 *
+	 * @param string $model selected model
+	 * @param string $action selected action
+	 * @param array $params parameters
+	 * @param string $assign_to variable where you assign the result of the model
+	 */
+	function load_model( $model ){
 
-			// load the model class
-			require_once LIBRARY_DIR . "Model.php";
+		// load the model class
+		require_once LIBRARY_DIR . "Model.php";
 
-			// transform the model string to capitalized. e.g. user => User, news_list => News_List
-			$model = implode( "_", array_map( "ucfirst",	explode( "_", $model )	) );
+		// transform the model string to capitalized. e.g. user => User, news_list => News_List
+		$model = implode( "_", array_map( "ucfirst",	explode( "_", $model )	) );
 
-			// include the file
-			if( file_exists($file = self::$models_dir . $model . ".php") )
-				require_once $file;
-			else{
-				trigger_error( "MODEL: FILE <b>{$file}</b> NOT FOUND ", E_USER_WARNING );
-				return false;
-			}
+		// include the file
+		if( file_exists($file = self::$models_dir . $model . ".php") )
+			require_once $file;
+		else{
+			trigger_error( "MODEL: FILE <b>{$file}</b> NOT FOUND ", E_USER_WARNING );
+			return false;
+		}
 
-			// class name
-			$class = $model . "_Model";
+		// class name
+		$class = $model . "_Model";
 
-			// test if the class exists
-			if( class_exists($class) )
-				return new $class;
-			else{
-				trigger_error( "MODEL: CLASS <b>{$model}</b> NOT FOUND", E_USER_WARNING );
-				return false;
-			}
-
-				}
+		// test if the class exists
+		if( class_exists($class) )
+			return new $class;
+		else{
+			trigger_error( "MODEL: CLASS <b>{$model}</b> NOT FOUND", E_USER_WARNING );
+			return false;
+		}
+	}
 
 
 
