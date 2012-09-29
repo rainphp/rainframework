@@ -78,7 +78,7 @@ class Loader{
 	 * @param string $params array of the selected actions
 	 * @param string $load_area selected load area where the controller is rendered
 	 */
-	function load_controller( $controller = null, $action = null, $params = array(), $load_area = "center" ){
+	public function load_controller( $controller = null, $action = null, $params = array(), $load_area = "center" ){
 
 		// transform the controller string to capitalized. e.g. user => user, news_list => news_list
 		$controller = strtolower( $controller );
@@ -95,7 +95,7 @@ class Loader{
 
 		// check if the controller class exists
 		if( class_exists($class) )
-			$controller_obj = new $class( $this );
+			$controller_obj = new $class;
 		else
 			return trigger_error( "CONTROLLER: CLASS <b>{$controller}</b> NOT FOUND ", E_USER_WARNING );
 
