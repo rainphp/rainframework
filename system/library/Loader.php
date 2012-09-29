@@ -125,7 +125,7 @@ class Loader{
 			// verify that the action was executed
 			if( false === $action_response )
 				$html = "Action <b>$action</b> not found in controller <b>$class</b>! Method not declared or declared with different private access";
-			else
+			elseif(is_array($action_response))
 				$this->assign($action_response);
 
 			$this->loaded_controller[] = array( "controller" => $controller, "execution_time" => timer("controller"), "memory_used" => memory_usage("controller") );
