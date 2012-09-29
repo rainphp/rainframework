@@ -160,11 +160,8 @@ class Loader{
 	 * Load the model
 	 *
 	 * @param string $model selected model
-	 * @param string $action selected action
-	 * @param array $params parameters
-	 * @param string $assign_to variable where you assign the result of the model
 	 */
-	function load_model( $model ){
+	public static function load_model( $model ){
 
 		// load the model class
 		require_once LIBRARY_DIR . "Model.php";
@@ -195,7 +192,7 @@ class Loader{
 
 
 				function load_menu(){
-						$menu_obj = $this->load_model( "menu" );
+						$menu_obj = static::load_model( "menu" );
 						$menu_list = $menu_obj->load_menu();
 						$this->assign( "menu", $menu_list );
 				}
@@ -255,7 +252,7 @@ class Loader{
 	 * User login
 	 */
 	public function authUser(){
-		$this->init_user();
+		$this->initUser();
 		User::Login( post('login'), post('password'), post('cookie'), get_post('logout') );
 	}
 

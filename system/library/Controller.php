@@ -39,16 +39,12 @@ class Controller{
 	 * @param string $object_name Name to access the model
 	 * @return boolean true if the model was loaded
 	 */
-	function load_model($model,$object_name=null){
+	public function load_model($model,$object_name=null){
 
-		if( !$object_name )
-			$object_name = $model;
+		$object_name = $object_name ?: $model;
 
-		// get the loader
-		$loader = Loader::get_instance();
-		
 		// assign the model to the object name, so now it's accessible from the controller
-		$this->$object_name = $loader->load_model( $model );
+		$this->$object_name = Loader::load_model( $model );
 
 	}
 
