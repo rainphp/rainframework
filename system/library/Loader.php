@@ -69,91 +69,78 @@ class Loader{
 								$this->load_controller($controller, $action, $params );
 				}
 
+	/**
+	 * Load the content selected by the URI and save the output in load_area.
+	 * Leave the parameters null if you want to load automatically the controllers
+	 *
+	 * @param string $controller selected controller
+	 * @param string $action selected action
+	 * @param string $params array of the selected actions
+	 * @param string $load_area selected load area where the controller is rendered
+	 */
+	function load_controller( $controller = null, $action = null, $params = array(), $load_area = "center" ){
 
+		// transform the controller string to capitalized. e.g. user => user, news_list => news_list
+		$controller = strtolower( $controller );
+		$controller_file = self::$controllers_dir . "$controller/$controller." . self::$controller_extension;
 
-				/**
-				 * Load the content selected by the URI and save the output in load_area.
-				 * Leave the parameters null if you want to load automatically the controllers
-				 *
-				 * @param string $controller selected controller
-				 * @param string $action selected action
-				 * @param string $params array of the selected actions
-				 * @param string $load_area selected load area where the controller is rendered
-				 */
-				function load_controller( $controller = null, $action = null, $params = array(), $load_area = "center" ){
+		// include the file
+		if( file_exists( $controller_file = self::$controllers_dir . "$controller/$controller." . self::$controller_extension ) )
+			require_once $controller_file;
+		else
+			return trigger_error( "CONTROLLER: FILE <b>{$controller_file}</b> NOT FOUND ", E_USER_WARNING );
 
+		// define the class name of the controller
+		$class = $controller . self::$controller_class_name;
 
-						// transform the controller string to capitalized. e.g. user => user, news_list => news_list
-						$controller = strtolower( $controller );
-						$controller_file = self::$controllers_dir . "$controller/$controller." . self::$controller_extension;
+		// check if the controller class exists
+		if( class_exists($class) )
+			$controller_obj = new $class( $this );
+		else
+			return trigger_error( "CONTROLLER: CLASS <b>{$controller}</b> NOT FOUND ", E_USER_WARNING );
 
-						// include the file
-						if( file_exists( $controller_file = self::$controllers_dir . "$controller/$controller." . self::$controller_extension ) )
-				require_once $controller_file;
-						else
-				return trigger_error( "CONTROLLER: FILE <b>{$controller_file}</b> NOT FOUND ", E_USER_WARNING );
+		if( $action ){
 
+			// start benchmark
+			timer_start("controller");
+			memory_usage_start("controller");
 
-						// define the class name of the controller
-						$class = $controller . self::$controller_class_name;
+			// start the output buffer
+			ob_start();
 
+			// call the method filter_before
+			call_user_func_array( array( $controller_obj, "filter_before" ), $params );
 
+			// call the selected action
+			$action_status = call_user_func_array( array( $controller_obj, $action ), $params );
 
-						// check if the controller class exists
-						if( class_exists($class) )
-				$controller_obj = new $class( $this );
-						else
-				return trigger_error( "CONTROLLER: CLASS <b>{$controller}</b> NOT FOUND ", E_USER_WARNING );
+			//call the method filter_after
+			call_user_func_array( array( $controller_obj, "filter_after" ), $params );
 
+			$html = ob_get_contents();
 
-						if( $action ){
+			// close the output buffer
+			ob_end_clean();
 
-								// start benchmark
-								timer_start("controller");
-								memory_usage_start("controller");
+			// verify that the action was executed
+			if( false === $action_status )
+				$html = "Action <b>$action</b> not found in controller <b>$class</b>! Method not declared or declared with different private access";
 
-								// start the output buffer
-								ob_start();
+			$this->loaded_controller[] = array( "controller" => $controller, "execution_time" => timer("controller"), "memory_used" => memory_usage("controller") );
 
-								// call the method filter_before
-								call_user_func_array( array( $controller_obj, "filter_before" ), $params );
+			// if it is in ajax mode print and stop the execution of the script
+			if( $this->ajax_mode ){
+				echo $html;
+				$this->_draw_ajax();
+			}else{
+				// save the output into the load_area array
+				if( !isset($this->load_area_array[$load_area]) )
+					$this->load_area_array[$load_area] = array();
 
-								// call the selected action
-								$action_status = call_user_func_array( array( $controller_obj, $action ), $params );
-
-								//call the method filter_after
-								call_user_func_array( array( $controller_obj, "filter_after" ), $params );
-
-								$html = ob_get_contents();
-
-								// close the output buffer
-								ob_end_clean();
-
-
-								// verify that the action was executed
-								if( false === $action_status )
-										$html = "Action <b>$action</b> not found in controller <b>$class</b>! Method not declared or declared with different private access";
-
-
-								$this->loaded_controller[] = array( "controller" => $controller, "execution_time" => timer("controller"), "memory_used" => memory_usage("controller") );
-
-								// if it is in ajax mode print and stop the execution of the script
-								if( $this->ajax_mode ){
-										echo $html;
-										$this->_draw_ajax();
-								}
-								else{
-										// save the output into the load_area array
-										if( !isset($this->load_area_array[$load_area]) )
-												$this->load_area_array[$load_area] = array();
-
-										$this->load_area_array[$load_area][] = $html;
-								}
-
-						}
-
-
-				}
+				$this->load_area_array[$load_area][] = $html;
+			}
+		}
+	}
 
 
 	/**
