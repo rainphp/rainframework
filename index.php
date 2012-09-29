@@ -27,7 +27,9 @@ $loader->auto_load_controller();
 # load the model and assign the result
 # @params model, action, params, assign_to
 #--------------------------------
-$loader->load_menu();
+$loader->assign('menu',
+ Loader::load_model('menu')->load_menu()
+);
 
 #--------------------------------
 # Assign Layout variables

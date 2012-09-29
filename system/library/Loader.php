@@ -191,14 +191,6 @@ class Loader{
 
 
 
-				function load_menu(){
-						$menu_obj = static::load_model( "menu" );
-						$menu_list = $menu_obj->load_menu();
-						$this->assign( "menu", $menu_list );
-				}
-
-
-
 				/**
 				 *
 				 * @param <type> $helper
