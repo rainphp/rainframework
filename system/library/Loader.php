@@ -112,7 +112,7 @@ class Loader{
 			call_user_func_array( array( $controller_obj, "filter_before" ), $params );
 
 			// call the selected action
-			$action_status = call_user_func_array( array( $controller_obj, $action ), $params );
+			$action_response = call_user_func_array( array( $controller_obj, $action ), $params );
 
 			//call the method filter_after
 			call_user_func_array( array( $controller_obj, "filter_after" ), $params );
@@ -123,8 +123,10 @@ class Loader{
 			ob_end_clean();
 
 			// verify that the action was executed
-			if( false === $action_status )
+			if( false === $action_response )
 				$html = "Action <b>$action</b> not found in controller <b>$class</b>! Method not declared or declared with different private access";
+			else
+				$this->assign($action_response);
 
 			$this->loaded_controller[] = array( "controller" => $controller, "execution_time" => timer("controller"), "memory_used" => memory_usage("controller") );
 
